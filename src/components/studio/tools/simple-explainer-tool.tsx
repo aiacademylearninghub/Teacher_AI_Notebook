@@ -15,10 +15,11 @@ import { useToast } from '@/hooks/use-toast';
 import type { GenerateSimpleExplanationOutput } from '@/ai/flows/generate-simple-explanations';
 import { Lightbulb, Wheat, Presentation } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
 
 type FormData = z.infer<typeof simpleExplainerSchema>;
 
-export function SimpleExplainerTool({ onBack }: { onBack: () => void }) {
+export function SimpleExplainerTool() {
   const [result, setResult] = useState<GenerateSimpleExplanationOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -138,7 +139,6 @@ export function SimpleExplainerTool({ onBack }: { onBack: () => void }) {
     <ToolView
       title="Simple Explainer"
       description="Explain complex topics with simple, real-life analogies."
-      onBack={onBack}
       form={formComponent}
       result={resultComponent}
       isLoading={isLoading}

@@ -24,7 +24,7 @@ type LessonPlan = {
   exit_question: string;
 };
 
-export function LessonPlannerTool({ onBack }: { onBack: () => void }) {
+export function LessonPlannerTool() {
   const [result, setResult] = useState<{ lesson_plan: LessonPlan[] } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -132,7 +132,6 @@ export function LessonPlannerTool({ onBack }: { onBack: () => void }) {
     <ToolView
       title="Lesson Planner"
       description="Generate 5-day lesson plans for any topic."
-      onBack={onBack}
       form={formComponent}
       result={resultComponent}
       isLoading={isLoading}

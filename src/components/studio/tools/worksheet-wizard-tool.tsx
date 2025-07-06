@@ -14,10 +14,11 @@ import { ToolView } from '../tool-view';
 import { useToast } from '@/hooks/use-toast';
 import type { GenerateDifferentiatedWorksheetsOutput } from '@/ai/flows/generate-differentiated-worksheets';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
 
 type FormData = z.infer<typeof worksheetWizardSchema>;
 
-export function WorksheetWizardTool({ onBack }: { onBack: () => void }) {
+export function WorksheetWizardTool() {
   const [result, setResult] = useState<GenerateDifferentiatedWorksheetsOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -122,7 +123,6 @@ export function WorksheetWizardTool({ onBack }: { onBack: () => void }) {
     <ToolView
       title="Worksheet Wizard"
       description="Create differentiated worksheets from any lesson text."
-      onBack={onBack}
       form={formComponent}
       result={resultComponent}
       isLoading={isLoading}

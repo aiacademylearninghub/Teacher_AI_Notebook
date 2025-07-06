@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 
 type FormData = z.infer<typeof localStorySchema>;
 
-export function LocalStoryTool({ onBack }: { onBack: () => void }) {
+export function LocalStoryTool() {
   const [result, setResult] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -113,7 +113,6 @@ export function LocalStoryTool({ onBack }: { onBack: () => void }) {
     <ToolView
       title="Local Storytelling"
       description="Generate stories with local context and farmer analogies."
-      onBack={onBack}
       form={formComponent}
       result={resultComponent}
       isLoading={isLoading}

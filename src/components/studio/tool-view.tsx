@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,19 +8,20 @@ import { Skeleton } from '@/components/ui/skeleton';
 interface ToolViewProps {
   title: string;
   description: string;
-  onBack: () => void;
   form: React.ReactNode;
   result: React.ReactNode;
   isLoading: boolean;
 }
 
-export function ToolView({ title, description, onBack, form, result, isLoading }: ToolViewProps) {
+export function ToolView({ title, description, form, result, isLoading }: ToolViewProps) {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <Button variant="ghost" onClick={onBack} className="mb-2 -ml-2">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Tools
+        <Button variant="ghost" asChild className="mb-2 -ml-2">
+            <Link href="/">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Notebook
+            </Link>
         </Button>
         <h1 className="text-2xl font-bold">{title}</h1>
         <p className="text-muted-foreground">{description}</p>

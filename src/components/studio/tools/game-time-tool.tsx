@@ -17,7 +17,7 @@ import { Separator } from '@/components/ui/separator';
 
 type FormData = z.infer<typeof gameTimeSchema>;
 
-export function GameTimeTool({ onBack }: { onBack: () => void }) {
+export function GameTimeTool() {
   const [result, setResult] = useState<GenerateGameOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -118,7 +118,6 @@ export function GameTimeTool({ onBack }: { onBack: () => void }) {
     <ToolView
       title="Game Time"
       description="Create educational paper or board games in minutes."
-      onBack={onBack}
       form={formComponent}
       result={resultComponent}
       isLoading={isLoading}
