@@ -8,6 +8,7 @@ export const localStorySchema = z.object({
 
 export const worksheetWizardSchema = z.object({
   lessonText: z.string().min(20, { message: 'Lesson text must be at least 20 characters long.' }),
+  taskType: z.string().min(1, { message: 'Please select a task type.' }),
   gradeLevel: z.string(),
   language: z.string().min(2),
 });

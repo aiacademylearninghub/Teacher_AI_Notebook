@@ -1,7 +1,7 @@
 "use server";
 
 import { generateLocalStory, GenerateLocalStoryInput } from "@/ai/flows/generate-local-story";
-import { generateDifferentiatedWorksheets, GenerateDifferentiatedWorksheetsInput } from "@/ai/flows/generate-differentiated-worksheets";
+import { generateStudyMaterials, GenerateStudyMaterialsInput } from "@/ai/flows/generate-differentiated-worksheets";
 import { generateSimpleExplanation, GenerateSimpleExplanationInput } from "@/ai/flows/generate-simple-explanations";
 import { generateLessonPlan, GenerateLessonPlanInput } from "@/ai/flows/generate-lesson-plan";
 import { playTicTacToe, PlayTicTacToeInput } from "@/ai/flows/play-tic-tac-toe";
@@ -16,8 +16,8 @@ export async function runGenerateStory(input: GenerateLocalStoryInput) {
     return await generateLocalStory(input);
 }
 
-export async function runGenerateWorksheets(input: GenerateDifferentiatedWorksheetsInput) {
-    return await generateDifferentiatedWorksheets(input);
+export async function runGenerateStudyMaterials(input: GenerateStudyMaterialsInput) {
+    return await generateStudyMaterials(input);
 }
 
 export async function runGenerateExplanation(input: GenerateSimpleExplanationInput) {
