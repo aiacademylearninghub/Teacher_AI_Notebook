@@ -8,6 +8,7 @@ import { generateGame, GenerateGameInput } from "@/ai/flows/generate-game";
 import { chatWithSources, ChatWithSourcesInput } from "@/ai/flows/chat-with-sources";
 import { generateImage, GenerateImageInput } from "@/ai/flows/generate-image";
 import { generateAudio, GenerateAudioInput } from "@/ai/flows/generate-audio";
+import { extractTextFromImage, ExtractTextFromImageInput } from "@/ai/flows/extract-text-from-image";
 
 export async function runGenerateStory(input: GenerateLocalStoryInput) {
     return await generateLocalStory(input);
@@ -39,4 +40,8 @@ export async function runGenerateImage(input: GenerateImageInput) {
 
 export async function runGenerateAudio(input: GenerateAudioInput) {
     return await generateAudio(input);
+}
+
+export async function runExtractTextFromImage(input: ExtractTextFromImageInput) {
+    return await extractTextFromImage(input);
 }
