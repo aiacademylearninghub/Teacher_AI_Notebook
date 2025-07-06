@@ -29,7 +29,8 @@ const GenerateGameOutputSchema = z.object({
   learningObjective: z
     .string()
     .describe('The specific educational or cognitive skill the game aims to develop.'),
-  gameAdaptations: z.string().describe('Suggestions on how to make the game simpler for younger players or more challenging for advanced players.')
+  gameAdaptations: z.string().describe('Suggestions on how to make the game simpler for younger players or more challenging for advanced players.'),
+  gameBoardImagePrompt: z.string().describe('A detailed text-to-image prompt to generate an image of the game board.')
 });
 export type GenerateGameOutput = z.infer<typeof GenerateGameOutputSchema>;
 
@@ -59,7 +60,9 @@ Language: {{{language}}}
 
 Crucially, you must also provide suggestions for how a teacher can adapt the game to be either simpler for students who are struggling, or more complex for students who need a challenge.
 
-Please provide a creative game name, clear instructions, a list of simple materials, the core learning objective, and ideas for adaptation.
+Finally, you must generate a detailed, descriptive prompt that could be given to a text-to-image AI to create the game board. This prompt should describe all the visual elements, layout, paths, start/end points, and any special spaces on the board.
+
+Please provide a creative game name, clear instructions, a list of simple materials, the core learning objective, ideas for adaptation, and the game board image prompt.
 `,
 });
 

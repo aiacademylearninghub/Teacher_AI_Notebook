@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { z } from 'zod';
 import { gameTimeSchema } from '@/lib/schemas';
-import { runGenerateGame } from '@/lib/actions';
+import { runGenerateGame, runGenerateImage } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -14,7 +15,9 @@ import { ToolView } from '../tool-view';
 import { useToast } from '@/hooks/use-toast';
 import type { GenerateGameOutput } from '@/ai/flows/generate-game';
 import { Separator } from '@/components/ui/separator';
-import { List, Target, ScrollText, Scaling } from 'lucide-react';
+import { List, Target, ScrollText, Scaling, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+
 
 type FormData = z.infer<typeof gameTimeSchema>;
 
@@ -32,6 +35,8 @@ const sampleTopics = [
 export function GameTimeTool({ onBack }: GameTimeToolProps) {
   const [result, setResult] = useState<GenerateGameOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [gameBoardImageUrl, setGameBoardImageUrl] = useState<string | null>(null);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<FormData>({
@@ -46,6 +51,7 @@ export function GameTimeTool({ onBack }: GameTimeToolProps) {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     setResult(null);
+    setGameBoardImageUrl(null);
     try {
       const response = await runGenerateGame(data);
       setResult(response);
@@ -60,6 +66,26 @@ export function GameTimeTool({ onBack }: GameTimeToolProps) {
       setIsLoading(false);
     }
   };
+  
+  const handleGenerateBoardImage = async () => {
+    if (!result?.gameBoardImagePrompt) return;
+    setIsGeneratingImage(true);
+    setGameBoardImageUrl(null);
+    try {
+        const response = await runGenerateImage({ prompt: result.gameBoardImagePrompt });
+        setGameBoardImageUrl(response.imageUrl);
+    } catch (error) {
+        toast({
+            title: "Error",
+            description: "Failed to generate game board image. Please try again.",
+            variant: "destructive",
+        });
+        console.error(error);
+    } finally {
+        setIsGeneratingImage(false);
+    }
+  };
+
 
   const formComponent = (
     <>
@@ -171,6 +197,36 @@ export function GameTimeTool({ onBack }: GameTimeToolProps) {
                 Game Adaptations
             </h3>
             <p className="pl-7 text-muted-foreground whitespace-pre-wrap">{result.gameAdaptations}</p>
+        </div>
+        
+        <Separator />
+        
+        <div className="space-y-4">
+            <h3 className="font-semibold text-lg flex items-center gap-2">
+                <ImageIcon className="h-5 w-5 text-primary"/>
+                Game Board
+            </h3>
+            <p className="text-sm text-muted-foreground">Click the button below to generate a visual game board you can print or use as a reference.</p>
+            <Button onClick={handleGenerateBoardImage} disabled={isGeneratingImage || !result}>
+                {isGeneratingImage ? (
+                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Board...</>
+                ) : (
+                    <><ImageIcon className="mr-2 h-4 w-4" /> Generate Game Board</>
+                )}
+            </Button>
+
+            {isGeneratingImage && <Skeleton className="w-full aspect-video rounded-lg" />}
+            {gameBoardImageUrl && (
+                <div className="rounded-lg overflow-hidden border border-border bg-muted">
+                    <Image
+                        src={gameBoardImageUrl}
+                        alt="Generated game board"
+                        width={512}
+                        height={288}
+                        className="w-full object-contain"
+                    />
+                </div>
+            )}
         </div>
     </div>
   ) : null;
