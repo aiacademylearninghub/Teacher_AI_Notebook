@@ -1,10 +1,11 @@
 "use client"
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { UploadCloud, Send, User, BrainCircuit } from 'lucide-react';
+import { UploadCloud, Send, User, BrainCircuit, ImageIcon, Mic, Loader2 } from 'lucide-react';
 import type { Source } from '@/components/sources/source-panel';
-import { runChatWithSources } from '@/lib/actions';
+import { runChatWithSources, runGenerateImage, runGenerateAudio } from '@/lib/actions';
 import { nanoid } from 'nanoid';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -14,6 +15,13 @@ interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  originalQuestion?: string;
+  showImageGenerator?: boolean;
+  showAudioGenerator?: boolean;
+  imageUrl?: string;
+  audioUrl?: string;
+  isGeneratingImage?: boolean;
+  isGeneratingAudio?: boolean;
 }
 
 interface ChatPanelProps {
@@ -36,7 +44,7 @@ export function ChatPanel({ sources, onAddSource }: ChatPanelProps) {
     if (chatContainerRef.current) {
         chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [messages, isLoading]);
+  }, [messages]);
   
   useEffect(() => {
     if (textareaRef.current) {
@@ -46,6 +54,43 @@ export function ChatPanel({ sources, onAddSource }: ChatPanelProps) {
         textareaRef.current.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
     }
   }, [input]);
+
+  const updateMessage = (id: string, updates: Partial<ChatMessage>) => {
+    setMessages(prev => prev.map(msg => msg.id === id ? { ...msg, ...updates } : msg));
+  };
+
+  const handleGenerateImage = async (messageId: string, prompt: string) => {
+    updateMessage(messageId, { isGeneratingImage: true, showImageGenerator: false });
+    try {
+      const response = await runGenerateImage({ prompt });
+      updateMessage(messageId, { imageUrl: response.imageUrl, isGeneratingImage: false });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate image. Please try again.",
+        variant: "destructive",
+      });
+      updateMessage(messageId, { isGeneratingImage: false, showImageGenerator: true });
+      console.error(error);
+    }
+  };
+
+  const handleGenerateAudio = async (messageId: string, text: string) => {
+    updateMessage(messageId, { isGeneratingAudio: true, showAudioGenerator: false });
+    try {
+      const response = await runGenerateAudio({ text });
+      updateMessage(messageId, { audioUrl: response.audioUrl, isGeneratingAudio: false });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate audio. Please try again.",
+        variant: "destructive",
+      });
+      updateMessage(messageId, { isGeneratingAudio: false, showAudioGenerator: true });
+      console.error(error);
+    }
+  };
+
 
   const handleSubmit = async () => {
     if (!input.trim() || isLoading || !hasSources) return;
@@ -62,7 +107,14 @@ export function ChatPanel({ sources, onAddSource }: ChatPanelProps) {
         question: currentInput, 
         sources: sources.map(s => ({name: s.name, content: s.content})) 
       });
-      const assistantMessage: ChatMessage = { id: nanoid(), role: 'assistant', content: response.answer };
+      const assistantMessage: ChatMessage = { 
+        id: nanoid(), 
+        role: 'assistant', 
+        content: response.answer,
+        originalQuestion: currentInput,
+        showImageGenerator: true,
+        showAudioGenerator: true,
+      };
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       toast({
@@ -115,6 +167,44 @@ export function ChatPanel({ sources, onAddSource }: ChatPanelProps) {
                    )}
                    <div className={`rounded-lg p-3 max-w-[85%] ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
                         <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+                        
+                        <div className="mt-4 space-y-4">
+                          {message.imageUrl && (
+                              <div className="relative aspect-video rounded-lg overflow-hidden border border-border">
+                                  <Image src={message.imageUrl} alt={`Generated image for ${message.originalQuestion}`} layout="fill" objectFit="contain" />
+                              </div>
+                          )}
+                          {message.audioUrl && (
+                              <audio controls src={message.audioUrl} className="w-full">
+                                  Your browser does not support the audio element.
+                              </audio>
+                          )}
+                        </div>
+
+                        {(message.showImageGenerator || message.showAudioGenerator || message.isGeneratingImage || message.isGeneratingAudio) && (
+                          <div className="mt-4 pt-3 border-t border-muted-foreground/20 flex flex-wrap gap-2">
+                            {message.showImageGenerator && (
+                              <Button size="sm" variant="outline" className="bg-card hover:bg-muted" onClick={() => handleGenerateImage(message.id, message.originalQuestion!)}>
+                                <ImageIcon className="mr-2 h-4 w-4" /> Generate Image
+                              </Button>
+                            )}
+                            {message.isGeneratingImage && (
+                              <Button size="sm" variant="outline" className="bg-card" disabled>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...
+                              </Button>
+                            )}
+                            {message.showAudioGenerator && (
+                              <Button size="sm" variant="outline" className="bg-card hover:bg-muted" onClick={() => handleGenerateAudio(message.id, message.content)}>
+                                <Mic className="mr-2 h-4 w-4" /> Generate Audio
+                              </Button>
+                            )}
+                            {message.isGeneratingAudio && (
+                              <Button size="sm" variant="outline" className="bg-card" disabled>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...
+                              </Button>
+                            )}
+                          </div>
+                        )}
                    </div>
                    {message.role === 'user' && (
                        <Avatar className="h-8 w-8 shrink-0">

@@ -6,6 +6,8 @@ import { generateSimpleExplanation, GenerateSimpleExplanationInput } from "@/ai/
 import { generateLessonPlan, GenerateLessonPlanInput } from "@/ai/flows/generate-lesson-plan";
 import { generateGame, GenerateGameInput } from "@/ai/flows/generate-game";
 import { chatWithSources, ChatWithSourcesInput } from "@/ai/flows/chat-with-sources";
+import { generateImage, GenerateImageInput } from "@/ai/flows/generate-image";
+import { generateAudio, GenerateAudioInput } from "@/ai/flows/generate-audio";
 
 export async function runGenerateStory(input: GenerateLocalStoryInput) {
     return await generateLocalStory(input);
@@ -29,4 +31,12 @@ export async function runGenerateGame(input: GenerateGameInput) {
 
 export async function runChatWithSources(input: ChatWithSourcesInput) {
     return await chatWithSources(input);
+}
+
+export async function runGenerateImage(input: GenerateImageInput) {
+    return await generateImage(input);
+}
+
+export async function runGenerateAudio(input: GenerateAudioInput) {
+    return await generateAudio(input);
 }
