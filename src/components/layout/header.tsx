@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Rss, Settings, Share, GripHorizontal, BookText, ClipboardEdit, Lightbulb, GraduationCap, Puzzle } from "lucide-react";
+import { BrainCircuit, Settings, Share, GripHorizontal, BookText, ClipboardEdit, Lightbulb, GraduationCap, Puzzle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,7 +28,7 @@ export function Header() {
             <div className="flex items-center gap-4">
                 <Link href="/" className="flex items-center gap-3">
                     <div className="p-1.5 bg-primary rounded-full">
-                        <Rss className="w-5 h-5 text-primary-foreground" />
+                        <BrainCircuit className="w-5 h-5 text-primary-foreground" />
                     </div>
                     <h1 className="text-lg font-semibold text-foreground/90 hidden sm:block">AI Notebook</h1>
                 </Link>
