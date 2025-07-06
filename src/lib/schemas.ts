@@ -24,3 +24,13 @@ export const lessonPlannerSchema = z.object({
   gradeLevel: z.string(),
   language: z.string().min(2),
 });
+
+export const studentAnalyzerSchema = z.object({
+  studentName: z.string().min(2, { message: 'Student name must be at least 2 characters long.' }),
+  gradeLevel: z.string(),
+  currentMonth: z.string(),
+  previousMonths: z.array(z.string()),
+  // Note: The actual data will be generated in the component for demo purposes
+  visualizationPreference: z.enum(['detailed', 'simple', 'comprehensive']).optional(),
+  chartColorTheme: z.enum(['default', 'monochrome', 'vibrant']).optional()
+});

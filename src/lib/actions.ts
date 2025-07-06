@@ -10,6 +10,7 @@ import { generateImage, GenerateImageInput } from "@/ai/flows/generate-image";
 import { generateAudio, GenerateAudioInput } from "@/ai/flows/generate-audio";
 import { extractTextFromImage, ExtractTextFromImageInput } from "@/ai/flows/extract-text-from-image";
 import { extractTextFromPdf, ExtractTextFromPdfInput } from "@/ai/flows/extract-text-from-pdf";
+import { analyzeStudentPerformance, AnalyzeStudentPerformanceInput } from "@/ai/flows/analyze-student-performance";
 
 
 export async function runGenerateStory(input: GenerateLocalStoryInput) {
@@ -50,4 +51,8 @@ export async function runExtractTextFromImage(input: ExtractTextFromImageInput) 
 
 export async function runExtractTextFromPdf(input: ExtractTextFromPdfInput) {
     return await extractTextFromPdf(input);
+}
+
+export async function runAnalyzeStudentPerformance(input: AnalyzeStudentPerformanceInput) {
+    return await analyzeStudentPerformance(input);
 }
