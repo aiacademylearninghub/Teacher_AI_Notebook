@@ -14,22 +14,144 @@ import { ToolView } from '../tool-view';
 import { useToast } from '@/hooks/use-toast';
 import type { GenerateStudyMaterialsOutput } from '@/ai/flows/generate-differentiated-worksheets';
 import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Badge } from '@/components/ui/badge';
+import { CheckCircle, ListChecks, PencilRuler, GraduationCap, Briefcase, FileText } from 'lucide-react';
 
 type FormData = z.infer<typeof worksheetWizardSchema>;
+type ResultType = GenerateStudyMaterialsOutput['generatedContent'] | null;
 
 const taskTypes = [
-    "Differentiated Worksheet",
-    "Mock Question Paper",
-    "Interview Preparation",
-    "Key Concepts Summary",
+    { value: "Differentiated Worksheet", label: "Differentiated Worksheet", icon: PencilRuler },
+    { value: "Mock Question Paper", label: "Mock Question Paper", icon: GraduationCap },
+    { value: "Interview Preparation", label: "Interview Preparation", icon: Briefcase },
+    { value: "Key Concepts Summary", label: "Key Concepts Summary", icon: FileText },
 ];
+
+const RenderInterviewPrep = ({ data }: { data: Extract<ResultType, { type: 'interview-prep' }> }) => (
+    <div className="space-y-4">
+        <h2 className="text-xl font-bold font-headline">{data.title}</h2>
+        <p className="text-muted-foreground">{data.introduction}</p>
+        <Accordion type="single" collapsible className="w-full" defaultValue={data.sections[0]?.title}>
+            {data.sections.map((section) => (
+                <AccordionItem value={section.title} key={section.title}>
+                    <AccordionTrigger className="text-lg">{section.title}</AccordionTrigger>
+                    <AccordionContent className="space-y-4">
+                        {section.questions.map((q, index) => (
+                            <Card key={index} className="bg-background/50">
+                                <CardHeader>
+                                    <CardTitle className="text-base">{q.question}</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-sm font-semibold mb-2 text-muted-foreground">Key Talking Points:</p>
+                                    <ul className="space-y-2 list-disc pl-5">
+                                        {q.talkingPoints.map((point, pIndex) => (
+                                            <li key={pIndex} className="text-sm">{point}</li>
+                                        ))}
+                                    </ul>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </AccordionContent>
+                </AccordionItem>
+            ))}
+        </Accordion>
+    </div>
+);
+
+const RenderWorksheet = ({ data }: { data: Extract<ResultType, { type: 'worksheet' }> }) => (
+    <div className="space-y-6">
+        <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2"><ListChecks className="text-primary"/>Comprehension Questions</CardTitle></CardHeader>
+            <CardContent>
+                <ol className="list-decimal space-y-2 pl-5">
+                    {data.comprehensionQuestions.map((q, i) => <li key={i}>{q}</li>)}
+                </ol>
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2"><FileText className="text-primary"/>Vocabulary Tasks</CardTitle></CardHeader>
+            <CardContent>
+                <ol className="list-decimal space-y-2 pl-5">
+                    {data.vocabularyTasks.map((task, i) => <li key={i}>{task}</li>)}
+                </ol>
+            </CardContent>
+        </Card>
+        <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2"><PencilRuler className="text-primary"/>Creative Tasks</CardTitle></CardHeader>
+            <CardContent>
+                <ol className="list-decimal space-y-2 pl-5">
+                    {data.creativeTasks.map((task, i) => <li key={i}>{task}</li>)}
+                </ol>
+            </CardContent>
+        </Card>
+    </div>
+);
+
+const RenderMockPaper = ({ data }: { data: Extract<ResultType, { type: 'mock-paper' }> }) => (
+    <div>
+        <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold font-headline">{data.title}</h2>
+            <Badge variant="secondary" className="mt-2">Total Marks: {data.totalMarks}</Badge>
+        </div>
+        <div className="space-y-6">
+            {data.sections.map((section, i) => (
+                <Card key={i}>
+                    <CardHeader><CardTitle>{section.title}</CardTitle></CardHeader>
+                    <CardContent>
+                        <ol className="list-decimal space-y-3 pl-5">
+                            {section.questions.map((q, j) => <li key={j}>{q}</li>)}
+                        </ol>
+                    </CardContent>
+                </Card>
+            ))}
+        </div>
+    </div>
+);
+
+const RenderSummary = ({ data }: { data: Extract<ResultType, { type: 'summary' }> }) => (
+    <div className="space-y-4">
+        <h2 className="text-xl font-bold font-headline">{data.title}</h2>
+        {data.concepts.map((c, i) => (
+            <Card key={i}>
+                <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                        <CheckCircle className="text-primary w-5 h-5"/> {c.concept}
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-muted-foreground">{c.summary}</p>
+                </CardContent>
+            </Card>
+        ))}
+    </div>
+);
+
+
+const GeneratedContentRenderer = ({ result }: { result: ResultType }) => {
+    if (!result) return null;
+
+    switch (result.type) {
+        case 'interview-prep':
+            return <RenderInterviewPrep data={result} />;
+        case 'worksheet':
+            return <RenderWorksheet data={result} />;
+        case 'mock-paper':
+            return <RenderMockPaper data={result} />;
+        case 'summary':
+            return <RenderSummary data={result} />;
+        default:
+            return <p>The generated content could not be displayed.</p>;
+    }
+};
 
 interface WorksheetWizardToolProps {
   onBack: () => void;
 }
 
 export function WorksheetWizardTool({ onBack }: WorksheetWizardToolProps) {
-  const [result, setResult] = useState<GenerateStudyMaterialsOutput | null>(null);
+  const [result, setResult] = useState<ResultType>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -48,7 +170,7 @@ export function WorksheetWizardTool({ onBack }: WorksheetWizardToolProps) {
     setResult(null);
     try {
       const response = await runGenerateStudyMaterials(data);
-      setResult(response);
+      setResult(response.generatedContent);
     } catch (error) {
       toast({
         title: "Error",
@@ -91,7 +213,12 @@ export function WorksheetWizardTool({ onBack }: WorksheetWizardToolProps) {
                 </FormControl>
                 <SelectContent>
                   {taskTypes.map((type) => (
-                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                    <SelectItem key={type.value} value={type.value}>
+                        <div className="flex items-center gap-2">
+                           <type.icon className="h-4 w-4 text-muted-foreground" />
+                           {type.label}
+                        </div>
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -137,11 +264,7 @@ export function WorksheetWizardTool({ onBack }: WorksheetWizardToolProps) {
     </Form>
   );
 
-  const resultComponent = result ? (
-    <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-        {result.generatedContent}
-    </div>
-  ) : null;
+  const resultComponent = <GeneratedContentRenderer result={result} />;
 
   return (
     <ToolView

@@ -18,10 +18,58 @@ const GenerateStudyMaterialsInputSchema = z.object({
 });
 export type GenerateStudyMaterialsInput = z.infer<typeof GenerateStudyMaterialsInputSchema>;
 
+
+// Schemas for structured output
+const DifferentiatedWorksheetSchema = z.object({
+  type: z.literal('worksheet'),
+  comprehensionQuestions: z.array(z.string()).describe("A list of reading comprehension questions."),
+  vocabularyTasks: z.array(z.string()).describe("A list of tasks focused on vocabulary from the text."),
+  creativeTasks: z.array(z.string()).describe("A list of creative tasks or writing prompts related to the text."),
+});
+
+const MockQuestionPaperSchema = z.object({
+    type: z.literal('mock-paper'),
+    title: z.string().describe("The title of the mock question paper."),
+    totalMarks: z.number().describe("The total marks for the paper."),
+    sections: z.array(z.object({
+        title: z.string().describe("The title of the section (e.g., 'Multiple Choice', 'Short Answer')."),
+        questions: z.array(z.string()).describe("A list of questions for this section."),
+    })).describe("The sections of the question paper."),
+});
+
+const InterviewPrepSchema = z.object({
+    type: z.literal('interview-prep'),
+    title: z.string().describe("The title for the interview preparation guide."),
+    introduction: z.string().describe("A brief introduction to the interview prep guide."),
+    sections: z.array(z.object({
+        title: z.string().describe("The title of the section (e.g., 'General Questions', 'Technical Questions')."),
+        questions: z.array(z.object({
+            question: z.string().describe("The interview question."),
+            talkingPoints: z.array(z.string()).describe("A list of key talking points or sample answers."),
+        })).describe("A list of questions for this section."),
+    })).describe("The main sections of the guide."),
+});
+
+const KeyConceptsSummarySchema = z.object({
+    type: z.literal('summary'),
+    title: z.string().describe("The title of the summary."),
+    concepts: z.array(z.object({
+        concept: z.string().describe("The key concept or term."),
+        summary: z.string().describe("The summary or definition of the concept."),
+    })).describe("A list of key concepts and their summaries."),
+});
+
+
 const GenerateStudyMaterialsOutputSchema = z.object({
-  generatedContent: z.string().describe('The generated content in well-structured Markdown format.'),
+  generatedContent: z.union([
+      DifferentiatedWorksheetSchema,
+      MockQuestionPaperSchema,
+      InterviewPrepSchema,
+      KeyConceptsSummarySchema
+  ]).describe("The generated study material in a structured format based on the task type."),
 });
 export type GenerateStudyMaterialsOutput = z.infer<typeof GenerateStudyMaterialsOutputSchema>;
+
 
 export async function generateStudyMaterials(input: GenerateStudyMaterialsInput): Promise<GenerateStudyMaterialsOutput> {
   return generateStudyMaterialsFlow(input);
@@ -32,6 +80,7 @@ const prompt = ai.definePrompt({
   input: {schema: GenerateStudyMaterialsInputSchema},
   output: {schema: GenerateStudyMaterialsOutputSchema},
   prompt: `You are an expert educator and content creator. Your task is to generate educational materials based on the provided text and user requirements.
+Generate a structured JSON output that conforms to the provided schema. The 'type' field in the output must correspond to the requested 'Task Type'.
 
 Task to perform: {{{taskType}}}
 
@@ -44,13 +93,13 @@ Source Text:
 
 ---
 
-Instructions based on Task Type:
-- If the task is 'Differentiated Worksheet', create three sections: Comprehension Questions, Vocabulary Tasks, and Creative Tasks.
-- If the task is 'Mock Question Paper', create a question paper with a mix of multiple-choice, short-answer, and long-answer questions. Include a title and suggest total marks.
-- If the task is 'Interview Preparation', generate a list of potential interview questions based on the text, along with key talking points or sample answers for each.
-- If the task is 'Key Concepts Summary', extract and summarize the most important concepts, definitions, and key takeaways from the text. Use bullet points and bold text for clarity.
+Instructions for JSON output based on Task Type:
+- If the task is 'Differentiated Worksheet', populate the 'DifferentiatedWorksheet' schema. Create three sections: Comprehension Questions, Vocabulary Tasks, and Creative Tasks.
+- If the task is 'Mock Question Paper', populate the 'MockQuestionPaper' schema. Create a question paper with a mix of multiple-choice, short-answer, and long-answer questions. Include a title and suggest total marks.
+- If the task is 'Interview Preparation', populate the 'InterviewPrep' schema. Generate a list of potential interview questions based on the text, along with key talking points or sample answers for each.
+- If the task is 'Key Concepts Summary', populate the 'KeyConceptsSummary' schema. Extract and summarize the most important concepts, definitions, and key takeaways from the text. Use bullet points and bold text for clarity.
 
-Please generate the content in well-structured Markdown format. Ensure the entire response is a single block of Markdown text.`,
+Adhere strictly to the output schema.`,
 });
 
 const generateStudyMaterialsFlow = ai.defineFlow(
