@@ -110,7 +110,7 @@ export function LocalStoryTool() {
             <FormItem>
               <FormLabel>Topic</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., The importance of water" {...field} />
+                <Input placeholder="e.g., A clever monkey and a foolish crocodile" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

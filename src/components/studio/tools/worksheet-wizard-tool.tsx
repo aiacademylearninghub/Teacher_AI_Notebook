@@ -60,7 +60,7 @@ export function WorksheetWizardTool() {
             <FormItem>
               <FormLabel>Lesson Text</FormLabel>
               <FormControl>
-                <Textarea placeholder="Paste your lesson text here..." {...field} rows={8} />
+                <Textarea placeholder="e.g., Photosynthesis is the process by which green plants use sunlight to synthesize foods..." {...field} rows={8} />
               </FormControl>
               <FormMessage />
             </FormItem>
