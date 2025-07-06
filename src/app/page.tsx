@@ -10,14 +10,28 @@ export default function Home() {
   const [sources, setSources] = useState<Source[]>([]);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
 
+  const handleToggleSource = (id: string) => {
+    setSources(prevSources =>
+      prevSources.map(source =>
+        source.id === id ? { ...source, isSelected: !source.isSelected } : source
+      )
+    );
+  };
+  
+  const selectedSources = sources.filter(source => source.isSelected);
+
   return (
     <>
       <div className="flex h-full">
         <aside className="hidden md:flex flex-col w-[320px] lg:w-[360px] border-r border-border">
-          <SourcePanel sources={sources} onAddSource={() => setIsUploadDialogOpen(true)} />
+          <SourcePanel 
+            sources={sources} 
+            onAddSource={() => setIsUploadDialogOpen(true)}
+            onToggleSource={handleToggleSource}
+          />
         </aside>
         <main className="flex-1 flex flex-col">
-          <ChatPanel sources={sources} onAddSource={() => setIsUploadDialogOpen(true)} />
+          <ChatPanel sources={selectedSources} onAddSource={() => setIsUploadDialogOpen(true)} />
         </main>
       </div>
       <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>

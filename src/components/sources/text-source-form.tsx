@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { FileText } from 'lucide-react';
 import type { Source } from './source-panel';
+import { nanoid } from 'nanoid';
 
 interface TextSourceFormProps {
   setSources: React.Dispatch<React.SetStateAction<Source[]>>;
@@ -22,10 +23,12 @@ export function TextSourceForm({ setSources, onSourceAdded }: TextSourceFormProp
     if (!title || !content) return;
 
     const newSource: Source = {
+      id: nanoid(),
       name: title,
       icon: FileText,
       content: content,
       type: 'text',
+      isSelected: true,
     };
     
     setSources(prevSources => [...prevSources, newSource]);

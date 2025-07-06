@@ -6,18 +6,21 @@ import { SourceCard } from "./source-card"
 import type { LucideIcon } from 'lucide-react';
 
 export interface Source {
+  id: string;
   name: string;
   icon: LucideIcon;
   content: string;
   type: string;
+  isSelected: boolean;
 }
 
 interface SourcePanelProps {
     sources: Source[];
     onAddSource: () => void;
+    onToggleSource: (id: string) => void;
 }
 
-export function SourcePanel({ sources, onAddSource }: SourcePanelProps) {
+export function SourcePanel({ sources, onAddSource, onToggleSource }: SourcePanelProps) {
   return (
     <div className="flex flex-col h-full p-4 gap-4">
       <div className="flex justify-between items-center">
@@ -36,9 +39,14 @@ export function SourcePanel({ sources, onAddSource }: SourcePanelProps) {
 
       {sources.length > 0 ? (
          <div className="flex-1 overflow-y-auto">
-            <div className="flex flex-col gap-2">
-              {sources.map((source, index) => (
-                <SourceCard key={index} name={source.name} icon={source.icon} />
+            <p className="text-sm text-muted-foreground mb-2 px-1">Select sources to include in conversation:</p>
+            <div className="flex flex-col gap-1">
+              {sources.map((source) => (
+                <SourceCard 
+                    key={source.id} 
+                    source={source}
+                    onToggleSource={onToggleSource} 
+                />
               ))}
             </div>
          </div>

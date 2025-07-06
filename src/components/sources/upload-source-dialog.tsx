@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef } from 'react';
+import { nanoid } from 'nanoid';
 import { Button } from '@/components/ui/button';
 import { Upload, FileText, Globe, Image as ImageIcon, Video, Mic, ArrowLeft, Loader2 } from 'lucide-react';
 import { TextSourceForm } from './text-source-form';
@@ -28,6 +29,17 @@ export function UploadSourceDialog({ setSources, closeDialog }: UploadSourceDial
     setIsUploading(true);
 
     try {
+      const addSource = (sourceData: Omit<Source, 'id' | 'isSelected'>) => {
+        const newSource: Source = {
+            ...sourceData,
+            id: nanoid(),
+            isSelected: true
+        };
+        setSources(prev => [...prev, newSource]);
+        toast({ title: "Success!", description: `Source "${file.name}" has been added.` });
+        closeDialog();
+      }
+
       if (file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = async (e) => {
@@ -42,9 +54,7 @@ export function UploadSourceDialog({ setSources, closeDialog }: UploadSourceDial
                 return;
             }
 
-            setSources(prev => [...prev, { name: file.name, content: text, icon: ImageIcon, type: 'image' }]);
-            toast({ title: "Success!", description: `Source "${file.name}" has been added.` });
-            closeDialog();
+            addSource({ name: file.name, content: text, icon: ImageIcon, type: 'image' });
           } catch (err) {
             console.error(err);
             toast({ title: 'OCR Failed', description: 'Could not extract text from the image.', variant: 'destructive' });
@@ -71,9 +81,7 @@ export function UploadSourceDialog({ setSources, closeDialog }: UploadSourceDial
                 return;
             }
 
-            setSources(prev => [...prev, { name: file.name, content: text, icon: FileText, type: 'pdf' }]);
-            toast({ title: "Success!", description: `Source "${file.name}" has been added.` });
-            closeDialog();
+            addSource({ name: file.name, content: text, icon: FileText, type: 'pdf' });
           } catch (err) {
             console.error(err);
             toast({ title: 'PDF Parse Failed', description: 'Could not extract text from the PDF.', variant: 'destructive' });
@@ -88,9 +96,7 @@ export function UploadSourceDialog({ setSources, closeDialog }: UploadSourceDial
         reader.readAsDataURL(file);
       } else if (file.type === 'text/plain' || file.name.endsWith('.md')) {
         const text = await file.text();
-        setSources(prev => [...prev, { name: file.name, content: text, icon: FileText, type: 'text' }]);
-        toast({ title: "Success!", description: `Source "${file.name}" has been added.` });
-        closeDialog();
+        addSource({ name: file.name, content: text, icon: FileText, type: 'text' });
         setIsUploading(false);
       } else {
         toast({ title: 'Unsupported File Type', description: 'Please upload a text (.txt, .md), image (.png, .jpg), or PDF (.pdf) file.', variant: 'destructive' });
