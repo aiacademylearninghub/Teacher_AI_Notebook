@@ -14,12 +14,20 @@ import { ToolView } from '../tool-view';
 import { useToast } from '@/hooks/use-toast';
 import type { GenerateGameOutput } from '@/ai/flows/generate-game';
 import { Separator } from '@/components/ui/separator';
+import { List, Target, ScrollText, Scaling } from 'lucide-react';
 
 type FormData = z.infer<typeof gameTimeSchema>;
 
 interface GameTimeToolProps {
   onBack: () => void;
 }
+
+const sampleTopics = [
+    "Planetary Orbits",
+    "Creative Writing Prompts",
+    "Basic Economics: Supply & Demand",
+    "Introduction to Photosynthesis",
+];
 
 export function GameTimeTool({ onBack }: GameTimeToolProps) {
   const [result, setResult] = useState<GenerateGameOutput | null>(null);
@@ -54,67 +62,116 @@ export function GameTimeTool({ onBack }: GameTimeToolProps) {
   };
 
   const formComponent = (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="topic"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Topic</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., Addition and Subtraction" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="gradeLevel"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Grade Level</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+    <>
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground">Need inspiration? Try one of these topics:</p>
+        <div className="flex flex-wrap gap-2">
+          {sampleTopics.map((topic) => (
+            <Button
+              key={topic}
+              variant="outline"
+              size="sm"
+              className="bg-card hover:bg-muted h-auto py-1.5"
+              onClick={() => form.setValue('topic', topic, { shouldValidate: true })}
+            >
+              {topic}
+            </Button>
+          ))}
+        </div>
+      </div>
+      <Separator />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="topic"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Topic</FormLabel>
                 <FormControl>
-                  <SelectTrigger><SelectValue placeholder="Select a grade" /></SelectTrigger>
+                  <Input placeholder="e.g., Addition and Subtraction" {...field} />
                 </FormControl>
-                <SelectContent>
-                   {[...Array(12)].map((_, i) => <SelectItem key={i+1} value={String(i + 1)}>Grade {i + 1}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="language"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Language</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., English" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Generating...' : 'Generate Game'}
-        </Button>
-      </form>
-    </Form>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="gradeLevel"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Grade Level</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger><SelectValue placeholder="Select a grade" /></SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {[...Array(12)].map((_, i) => <SelectItem key={i + 1} value={String(i + 1)}>Grade {i + 1}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="language"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Language</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., English" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? 'Generating...' : 'Generate Game'}
+          </Button>
+        </form>
+      </Form>
+    </>
   );
 
   const resultComponent = result ? (
-    <div className="prose prose-sm dark:prose-invert max-w-none space-y-3">
-        <h2 className="font-headline text-xl font-bold mt-0">{result.gameName}</h2>
+    <div className="space-y-6 text-sm">
+        <div className="text-center">
+            <h2 className="text-xl font-bold">{result.gameName}</h2>
+        </div>
         <Separator/>
-        <p><strong>Learning Objective:</strong> {result.learningObjective}</p>
-        <p><strong>Materials Needed:</strong> {result.materialsNeeded}</p>
-        <h3>Instructions</h3>
-        <p className="whitespace-pre-wrap">{result.gameInstructions}</p>
+
+        <div>
+            <h3 className="font-semibold mb-2 flex items-center gap-2">
+                <Target className="h-5 w-5 text-primary"/>
+                Learning Objective
+            </h3>
+            <p className="pl-7 text-muted-foreground">{result.learningObjective}</p>
+        </div>
+
+         <div>
+            <h3 className="font-semibold mb-2 flex items-center gap-2">
+                <List className="h-5 w-5 text-primary"/>
+                Materials Needed
+            </h3>
+            <p className="pl-7 text-muted-foreground whitespace-pre-wrap">{result.materialsNeeded}</p>
+        </div>
+        
+        <div>
+            <h3 className="font-semibold mb-2 flex items-center gap-2">
+                <ScrollText className="h-5 w-5 text-primary"/>
+                How to Play
+            </h3>
+            <p className="pl-7 text-muted-foreground whitespace-pre-wrap">{result.gameInstructions}</p>
+        </div>
+
+        <div>
+            <h3 className="font-semibold mb-2 flex items-center gap-2">
+                <Scaling className="h-5 w-5 text-primary"/>
+                Game Adaptations
+            </h3>
+            <p className="pl-7 text-muted-foreground whitespace-pre-wrap">{result.gameAdaptations}</p>
+        </div>
     </div>
   ) : null;
 
