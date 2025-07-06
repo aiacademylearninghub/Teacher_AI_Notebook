@@ -5,6 +5,7 @@ import { generateDifferentiatedWorksheets, GenerateDifferentiatedWorksheetsInput
 import { generateSimpleExplanation, GenerateSimpleExplanationInput } from "@/ai/flows/generate-simple-explanations";
 import { generateLessonPlan, GenerateLessonPlanInput } from "@/ai/flows/generate-lesson-plan";
 import { generateGame, GenerateGameInput } from "@/ai/flows/generate-game";
+import { chatWithSources, ChatWithSourcesInput } from "@/ai/flows/chat-with-sources";
 
 export async function runGenerateStory(input: GenerateLocalStoryInput) {
     return await generateLocalStory(input);
@@ -24,4 +25,8 @@ export async function runGenerateLessonPlan(input: GenerateLessonPlanInput) {
 
 export async function runGenerateGame(input: GenerateGameInput) {
     return await generateGame(input);
+}
+
+export async function runChatWithSources(input: ChatWithSourcesInput) {
+    return await chatWithSources(input);
 }
