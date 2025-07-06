@@ -18,7 +18,11 @@ import { Input } from '@/components/ui/input';
 
 type FormData = z.infer<typeof worksheetWizardSchema>;
 
-export function WorksheetWizardTool() {
+interface WorksheetWizardToolProps {
+  onBack: () => void;
+}
+
+export function WorksheetWizardTool({ onBack }: WorksheetWizardToolProps) {
   const [result, setResult] = useState<GenerateDifferentiatedWorksheetsOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -126,6 +130,7 @@ export function WorksheetWizardTool() {
       form={formComponent}
       result={resultComponent}
       isLoading={isLoading}
+      onBack={onBack}
     />
   );
 }

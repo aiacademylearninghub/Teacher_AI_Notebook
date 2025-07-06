@@ -1,45 +1,26 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { BookText, ClipboardEdit, Lightbulb, GraduationCap, Puzzle, Info, MicVocal, MessageSquareQuote, Waypoints } from "lucide-react";
+import { BookText, ClipboardEdit, Lightbulb, GraduationCap, Puzzle } from "lucide-react";
 
 interface StudioDashboardProps {
-  onSelectTool: (toolId: any) => void;
+  onSelectTool: (toolId: string) => void;
 }
 
-const toolsByCategory = {
-  "Audio Tools": [
-      {
-          id: 'audio-overview',
-          title: 'Audio Overview',
-          description: 'Create an Audio Overview in more languages!',
-          icon: MicVocal,
-      },
-      {
-          id: 'deep-dive',
-          title: 'Deep Dive conversation',
-          description: 'Two hosts',
-          icon: MessageSquareQuote
-      }
-  ],
-  "Teaching Aids": [
-    { id: "story", title: "Local Storytelling", description: "Generate stories with local context.", icon: BookText },
-    { id: "worksheet", title: "Worksheet Wizard", description: "Create worksheets from lesson text.", icon: ClipboardEdit },
-    { id: "explainer", title: "Simple Explainer", description: "Explain topics with simple analogies.", icon: Lightbulb },
-    { id: "planner", title: "Lesson Planner", description: "Generate 5-day lesson plans.", icon: GraduationCap },
-    { id: "game", title: "Game Time", description: "Create educational games.", icon: Puzzle },
-  ]
-};
+const tools = [
+  { id: "story", title: "Local Storytelling", description: "Generate stories with local context.", icon: BookText },
+  { id: "worksheet", title: "Worksheet Wizard", description: "Create worksheets from lesson text.", icon: ClipboardEdit },
+  { id: "explainer", title: "Simple Explainer", description: "Explain topics with simple analogies.", icon: Lightbulb },
+  { id: "planner", title: "Lesson Planner", description: "Generate 5-day lesson plans.", icon: GraduationCap },
+  { id: "game", title: "Game Time", description: "Create educational games.", icon: Puzzle },
+];
 
-const ToolButton = ({ tool, onSelect }: any) => {
-    const isEnabled = ['story', 'explainer', 'worksheet', 'planner', 'game'].includes(tool.id);
-
+const ToolButton = ({ tool, onSelect }: { tool: typeof tools[0], onSelect: (id: string) => void }) => {
     return (
         <Button 
             variant="ghost" 
             className="w-full h-auto justify-start p-3 text-left" 
-            onClick={() => isEnabled && onSelect(tool.id)}
-            disabled={!isEnabled}
+            onClick={() => onSelect(tool.id)}
         >
             <div className="p-2 bg-muted rounded-lg mr-4">
               <tool.icon className="w-5 h-5 text-foreground/80" />
@@ -55,24 +36,21 @@ const ToolButton = ({ tool, onSelect }: any) => {
 export function StudioDashboard({ onSelectTool }: StudioDashboardProps) {
   return (
     <div className="space-y-6 animate-fade-in">
-        {Object.entries(toolsByCategory).map(([category, tools]) => (
-            <div key={category}>
-                <div className="flex items-center justify-between mb-2 px-1">
-                    <h3 className="text-base font-semibold">{category}</h3>
-                    {category === 'Audio Tools' && <Info className="w-4 h-4 text-muted-foreground" />}
-                </div>
-                <Card className="bg-background/50">
-                    <CardContent className="p-1">
-                      {tools.map((tool, index) => (
-                          <React.Fragment key={tool.id}>
-                              <ToolButton tool={tool} onSelect={onSelectTool} />
-                              {index < tools.length - 1 && <div className="border-b border-border/50 mx-3" />}
-                          </React.Fragment>
-                      ))}
-                    </CardContent>
-                </Card>
+        <div>
+            <div className="flex items-center justify-between mb-2 px-1">
+                <h3 className="text-base font-semibold">Teaching Aids</h3>
             </div>
-        ))}
+            <Card className="bg-background/50">
+                <CardContent className="p-1">
+                  {tools.map((tool, index) => (
+                      <React.Fragment key={tool.id}>
+                          <ToolButton tool={tool} onSelect={onSelectTool} />
+                          {index < tools.length - 1 && <div className="border-b border-border/50 mx-3" />}
+                      </React.Fragment>
+                  ))}
+                </CardContent>
+            </Card>
+        </div>
     </div>
   );
 }

@@ -1,14 +1,40 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, type ComponentType } from 'react';
+import { AppLayout } from '@/components/layout/app-layout';
 import { ChatPanel } from '@/components/chat/chat-panel';
 import { SourcePanel, type Source } from '@/components/sources/source-panel';
+import { StudioNav } from '@/components/studio/studio-nav';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { UploadSourceDialog } from '@/components/sources/upload-source-dialog';
+
+// Tool Components
+import { LocalStoryTool } from '@/components/studio/tools/local-story-tool';
+import { WorksheetWizardTool } from '@/components/studio/tools/worksheet-wizard-tool';
+import { SimpleExplainerTool } from '@/components/studio/tools/simple-explainer-tool';
+import { LessonPlannerTool } from '@/components/studio/tools/lesson-planner-tool';
+import { GameTimeTool } from '@/components/studio/tools/game-time-tool';
+
+type ToolId = 'story' | 'worksheet' | 'explainer' | 'planner' | 'game';
+type View = 'chat' | ToolId;
+
+interface ToolProps {
+  onBack: () => void;
+}
+
+const toolComponents: Record<ToolId, ComponentType<ToolProps>> = {
+  story: LocalStoryTool,
+  worksheet: WorksheetWizardTool,
+  explainer: SimpleExplainerTool,
+  planner: LessonPlannerTool,
+  game: GameTimeTool,
+};
+
 
 export default function Home() {
   const [sources, setSources] = useState<Source[]>([]);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [activeView, setActiveView] = useState<View>('chat');
 
   const handleToggleSource = (id: string) => {
     setSources(prevSources =>
@@ -20,20 +46,29 @@ export default function Home() {
   
   const selectedSources = sources.filter(source => source.isSelected);
 
+  const renderMainContent = () => {
+    if (activeView === 'chat') {
+      return <ChatPanel sources={selectedSources} onAddSource={() => setIsUploadDialogOpen(true)} />;
+    }
+    const ToolComponent = toolComponents[activeView as ToolId];
+    return <div className="p-8 h-full overflow-y-auto"><ToolComponent onBack={() => setActiveView('chat')} /></div>;
+  };
+
   return (
     <>
-      <div className="flex h-full">
-        <aside className="hidden md:flex flex-col w-[320px] lg:w-[360px] border-r border-border">
+      <AppLayout
+        leftPanel={
+          <StudioNav onSelectTool={(toolId) => setActiveView(toolId as View)} />
+        }
+        mainPanel={renderMainContent()}
+        rightPanel={
           <SourcePanel 
             sources={sources} 
             onAddSource={() => setIsUploadDialogOpen(true)}
             onToggleSource={handleToggleSource}
           />
-        </aside>
-        <main className="flex-1 flex flex-col">
-          <ChatPanel sources={selectedSources} onAddSource={() => setIsUploadDialogOpen(true)} />
-        </main>
-      </div>
+        }
+      />
       <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
           <DialogContent>
               <DialogHeader>

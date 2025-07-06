@@ -19,7 +19,11 @@ import { Input } from '@/components/ui/input';
 
 type FormData = z.infer<typeof simpleExplainerSchema>;
 
-export function SimpleExplainerTool() {
+interface SimpleExplainerToolProps {
+  onBack: () => void;
+}
+
+export function SimpleExplainerTool({ onBack }: SimpleExplainerToolProps) {
   const [result, setResult] = useState<GenerateSimpleExplanationOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -142,6 +146,7 @@ export function SimpleExplainerTool() {
       form={formComponent}
       result={resultComponent}
       isLoading={isLoading}
+      onBack={onBack}
     />
   );
 }

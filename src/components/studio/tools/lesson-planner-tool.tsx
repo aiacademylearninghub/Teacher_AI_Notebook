@@ -24,7 +24,11 @@ type LessonPlan = {
   exit_question: string;
 };
 
-export function LessonPlannerTool() {
+interface LessonPlannerToolProps {
+  onBack: () => void;
+}
+
+export function LessonPlannerTool({ onBack }: LessonPlannerToolProps) {
   const [result, setResult] = useState<{ lesson_plan: LessonPlan[] } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -135,6 +139,7 @@ export function LessonPlannerTool() {
       form={formComponent}
       result={resultComponent}
       isLoading={isLoading}
+      onBack={onBack}
     />
   );
 }

@@ -17,7 +17,11 @@ import { Separator } from '@/components/ui/separator';
 
 type FormData = z.infer<typeof gameTimeSchema>;
 
-export function GameTimeTool() {
+interface GameTimeToolProps {
+  onBack: () => void;
+}
+
+export function GameTimeTool({ onBack }: GameTimeToolProps) {
   const [result, setResult] = useState<GenerateGameOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -121,6 +125,7 @@ export function GameTimeTool() {
       form={formComponent}
       result={resultComponent}
       isLoading={isLoading}
+      onBack={onBack}
     />
   );
 }

@@ -19,7 +19,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 type FormData = z.infer<typeof localStorySchema>;
 
-export function LocalStoryTool() {
+interface LocalStoryToolProps {
+  onBack: () => void;
+}
+
+export function LocalStoryTool({ onBack }: LocalStoryToolProps) {
   const [result, setResult] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [lastSubmittedData, setLastSubmittedData] = useState<FormData | null>(null);
@@ -226,6 +230,7 @@ export function LocalStoryTool() {
       form={formComponent}
       result={resultComponent}
       isLoading={isLoading}
+      onBack={onBack}
     />
   );
 }
