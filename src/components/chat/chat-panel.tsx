@@ -29,6 +29,13 @@ interface ChatPanelProps {
   onAddSource: () => void;
 }
 
+const sampleQuestions = [
+    "Summarize the key points of this document.",
+    "What are the main arguments presented?",
+    "List the most important facts from this source.",
+    "Create a few quiz questions based on this content."
+];
+
 export function ChatPanel({ sources, onAddSource }: ChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -57,6 +64,11 @@ export function ChatPanel({ sources, onAddSource }: ChatPanelProps) {
 
   const updateMessage = (id: string, updates: Partial<ChatMessage>) => {
     setMessages(prev => prev.map(msg => msg.id === id ? { ...msg, ...updates } : msg));
+  };
+
+  const handleSampleQuestionClick = (question: string) => {
+    setInput(question);
+    textareaRef.current?.focus();
   };
 
   const handleGenerateImage = async (messageId: string, prompt: string) => {
@@ -152,6 +164,19 @@ export function ChatPanel({ sources, onAddSource }: ChatPanelProps) {
                 </div>
                 <h2 className="text-xl font-semibold">Ready to Chat</h2>
                 <p className="text-sm text-muted-foreground">Ask questions, get summaries, or brainstorm ideas based on your sources.</p>
+                <div className="mt-4 w-full max-w-md space-y-2">
+                    <p className="text-sm text-muted-foreground">Or try one of these suggestions:</p>
+                    {sampleQuestions.map((q, i) => (
+                        <Button
+                            key={i}
+                            variant="outline"
+                            className="w-full justify-start text-left h-auto py-2 bg-card hover:bg-muted"
+                            onClick={() => handleSampleQuestionClick(q)}
+                        >
+                            {q}
+                        </Button>
+                    ))}
+                </div>
              </div>
          );
     }
