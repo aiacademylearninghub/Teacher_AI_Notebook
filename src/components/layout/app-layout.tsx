@@ -5,7 +5,8 @@ import {
   SidebarHeader,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Logo } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { Database, FileDown } from "lucide-react";
 
 interface AppLayoutProps {
   sourcePanel: React.ReactNode;
@@ -15,17 +16,19 @@ interface AppLayoutProps {
 export function AppLayout({ sourcePanel, children }: AppLayoutProps) {
   return (
     <SidebarProvider>
-      <Sidebar side="left" collapsible="icon" className="border-r border-sidebar-border/50">
+      <Sidebar side="left" collapsible="icon" className="border-r border-sidebar-border/20 bg-background/30 backdrop-blur-lg">
         <SidebarHeader className="h-14 items-center justify-between px-3">
-            <div className="flex items-center gap-2">
-                <Logo className="size-6" />
-                <h1 className="font-headline text-lg font-bold text-foreground">Bharat AI</h1>
+            <div className="flex items-center gap-3">
+                <div className="p-1.5 bg-gradient-to-br from-green-400 to-cyan-400 rounded-md">
+                    <Database className="size-5 text-white" />
+                </div>
+                <h1 className="font-bold text-lg text-foreground group-data-[collapsible=icon]:hidden">AI Notebook</h1>
             </div>
         </SidebarHeader>
         {sourcePanel}
       </Sidebar>
       <SidebarInset>
-        <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
+        <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b border-border/20 bg-background/50 px-4 backdrop-blur-sm sm:px-6">
              <SidebarTrigger className="md:hidden" />
              <div/>
              <Button variant="outline" size="sm">
@@ -38,6 +41,3 @@ export function AppLayout({ sourcePanel, children }: AppLayoutProps) {
     </SidebarProvider>
   )
 }
-import { Button } from "@/components/ui/button";
-import { FileDown } from "lucide-react";
-
