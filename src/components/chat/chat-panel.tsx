@@ -176,7 +176,7 @@ export function ChatPanel({ sources, onAddSource }: ChatPanelProps) {
   const renderChatContent = () => {
     if (!hasSources) {
       return (
-        <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center p-8">
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center p-4 md:p-8">
             <div className="p-4 bg-muted rounded-full">
                 <UploadCloud className="w-8 h-8 text-muted-foreground" />
             </div>
@@ -189,7 +189,7 @@ export function ChatPanel({ sources, onAddSource }: ChatPanelProps) {
 
     if (messages.length === 0) {
          return (
-             <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center p-8">
+             <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center p-4 md:p-8">
                 <div className="p-4 bg-muted rounded-full">
                     <BrainCircuit className="w-8 h-8 text-primary" />
                 </div>

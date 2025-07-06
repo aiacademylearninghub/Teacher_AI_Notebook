@@ -51,7 +51,7 @@ export default function Home() {
       return <ChatPanel sources={selectedSources} onAddSource={() => setIsUploadDialogOpen(true)} />;
     }
     const ToolComponent = toolComponents[activeView as ToolId];
-    return <div className="p-8 h-full overflow-y-auto"><ToolComponent onBack={() => setActiveView('chat')} /></div>;
+    return <div className="p-4 md:p-8 h-full overflow-y-auto"><ToolComponent onBack={() => setActiveView('chat')} /></div>;
   };
 
   return (
