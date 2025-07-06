@@ -15,21 +15,22 @@ interface ToolViewProps {
 
 export function ToolView({ title, description, onBack, form, result, isLoading }: ToolViewProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div>
-        <Button variant="ghost" onClick={onBack} className="mb-2">
+        <Button variant="ghost" onClick={onBack} className="mb-2 -ml-2">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Tools
         </Button>
-        <h1 className="font-headline text-3xl font-bold">{title}</h1>
+        <h1 className="text-2xl font-bold">{title}</h1>
         <p className="text-muted-foreground">{description}</p>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-5">
-        <div className="lg:col-span-2">{form}</div>
-        <div className="lg:col-span-3">
-          <Card className="min-h-[400px]">
-            <CardContent className="p-6">
+      <div className="space-y-6">
+        <div>{form}</div>
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Result</h3>
+          <Card className="min-h-[300px] bg-background">
+            <CardContent className="p-4">
               {isLoading ? (
                 <div className="space-y-4">
                   <Skeleton className="h-6 w-1/2" />
@@ -38,7 +39,7 @@ export function ToolView({ title, description, onBack, form, result, isLoading }
                   <Skeleton className="h-4 w-full" />
                 </div>
               ) : (
-                result || <div className="flex h-full min-h-[350px] items-center justify-center text-center text-muted-foreground"><p>Your generated content will appear here.</p></div>
+                result || <div className="flex h-full min-h-[250px] items-center justify-center text-center text-muted-foreground"><p>Your generated content will appear here.</p></div>
               )}
             </CardContent>
           </Card>

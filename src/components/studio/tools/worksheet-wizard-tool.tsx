@@ -13,7 +13,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ToolView } from '../tool-view';
 import { useToast } from '@/hooks/use-toast';
 import type { GenerateDifferentiatedWorksheetsOutput } from '@/ai/flows/generate-differentiated-worksheets';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
 type FormData = z.infer<typeof worksheetWizardSchema>;
@@ -91,7 +90,7 @@ export function WorksheetWizardTool({ onBack }: { onBack: () => void }) {
             <FormItem>
               <FormLabel>Language</FormLabel>
               <FormControl>
-                <Textarea placeholder="e.g., Hindi, English" {...field} />
+                <Input placeholder="e.g., Hindi, English" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -106,7 +105,6 @@ export function WorksheetWizardTool({ onBack }: { onBack: () => void }) {
 
   const resultComponent = result ? (
     <div className="space-y-4">
-      <h2 className="font-headline text-xl font-bold">Generated Worksheet</h2>
       <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
         <h3>Comprehension Questions</h3>
         <p>{result.comprehensionQuestions}</p>

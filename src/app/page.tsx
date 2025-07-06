@@ -1,13 +1,14 @@
 import { AppLayout } from '@/components/layout/app-layout';
-import { NotebookPanel } from '@/components/notebook/notebook-panel';
+import { ChatPanel } from '@/components/chat/chat-panel';
 import { SourcePanel } from '@/components/sources/source-panel';
+import { StudioPanel } from '@/components/studio/studio-panel';
 
 export default function Home() {
   return (
     <AppLayout
       sourcePanel={<SourcePanel />}
-    >
-      <NotebookPanel />
-    </AppLayout>
+      mainPanel={<ChatPanel />}
+      studioPanel={<StudioPanel />}
+    />
   );
 }

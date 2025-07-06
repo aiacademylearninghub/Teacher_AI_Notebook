@@ -4,29 +4,35 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { z } from 'zod';
-import { simpleExplainerSchema } from '@/lib/schemas';
-import { runGenerateExplanation } from '@/lib/actions';
+import { lessonPlannerSchema } from '@/lib/schemas';
+import { runGenerateLessonPlan } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ToolView } from '../tool-view';
 import { useToast } from '@/hooks/use-toast';
-import type { GenerateSimpleExplanationOutput } from '@/ai/flows/generate-simple-explanations';
-import { Lightbulb, Wheat, Presentation } from 'lucide-react';
-import { Separator } from '@/components/ui/separator';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
-type FormData = z.infer<typeof simpleExplainerSchema>;
+type FormData = z.infer<typeof lessonPlannerSchema>;
 
-export function SimpleExplainerTool({ onBack }: { onBack: () => void }) {
-  const [result, setResult] = useState<GenerateSimpleExplanationOutput | null>(null);
+type LessonPlan = {
+  day: number;
+  objective: string;
+  activity: string;
+  materials: string[];
+  exit_question: string;
+};
+
+export function LessonPlannerTool({ onBack }: { onBack: () => void }) {
+  const [result, setResult] = useState<{ lesson_plan: LessonPlan[] } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<FormData>({
-    resolver: zodResolver(simpleExplainerSchema),
+    resolver: zodResolver(lessonPlannerSchema),
     defaultValues: {
-      question: '',
+      topic: '',
       gradeLevel: '5',
       language: 'English',
     },
@@ -36,12 +42,12 @@ export function SimpleExplainerTool({ onBack }: { onBack: () => void }) {
     setIsLoading(true);
     setResult(null);
     try {
-      const response = await runGenerateExplanation(data);
+      const response = await runGenerateLessonPlan(data);
       setResult(response);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to generate explanation. Please try again.",
+        description: "Failed to generate lesson plan. Please try again.",
         variant: "destructive",
       });
       console.error(error);
@@ -55,12 +61,12 @@ export function SimpleExplainerTool({ onBack }: { onBack: () => void }) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="question"
+          name="topic"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Question to Explain</FormLabel>
+              <FormLabel>Topic</FormLabel>
               <FormControl>
-                <Textarea placeholder="e.g., Why is the sky blue?" {...field} rows={4} />
+                <Input placeholder="e.g., Photosynthesis" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -77,7 +83,7 @@ export function SimpleExplainerTool({ onBack }: { onBack: () => void }) {
                   <SelectTrigger><SelectValue placeholder="Select a grade" /></SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                   {[...Array(12)].map((_, i) => <SelectItem key={i+1} value={String(i + 1)}>Grade {i + 1}</SelectItem>)}
+                  {[...Array(12)].map((_, i) => <SelectItem key={i+1} value={String(i + 1)}>Grade {i + 1}</SelectItem>)}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -91,53 +97,41 @@ export function SimpleExplainerTool({ onBack }: { onBack: () => void }) {
             <FormItem>
               <FormLabel>Language</FormLabel>
               <FormControl>
-                <Textarea placeholder="e.g., Marathi, English" {...field} />
+                <Input placeholder="e.g., English, Bengali" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Generating...' : 'Generate Explanation'}
+          {isLoading ? 'Generating...' : 'Generate Lesson Plan'}
         </Button>
       </form>
     </Form>
   );
 
   const resultComponent = result ? (
-    <div className="space-y-6">
-      <div className="prose prose-sm dark:prose-invert max-w-none">
-        <div className="flex items-start gap-3">
-            <Lightbulb className="h-5 w-5 mt-1 text-primary" />
-            <div>
-                <h3 className="font-headline mt-0">Simple Explanation</h3>
-                <p className="whitespace-pre-wrap">{result.explanation}</p>
+    <Accordion type="single" collapsible className="w-full">
+      {result.lesson_plan.map((dayPlan) => (
+        <AccordionItem value={`day-${dayPlan.day}`} key={dayPlan.day}>
+          <AccordionTrigger className="font-headline text-lg">Day {dayPlan.day}</AccordionTrigger>
+          <AccordionContent>
+            <div className="prose prose-sm dark:prose-invert max-w-none space-y-3">
+              <p><strong>Objective:</strong> {dayPlan.objective}</p>
+              <p><strong>Activity:</strong> {dayPlan.activity}</p>
+              <p><strong>Materials:</strong> {dayPlan.materials.join(', ')}</p>
+              <p><strong>Exit Question:</strong> {dayPlan.exit_question}</p>
             </div>
-        </div>
-        <Separator className="my-4"/>
-        <div className="flex items-start gap-3">
-            <Wheat className="h-5 w-5 mt-1 text-primary" />
-             <div>
-                <h3 className="font-headline mt-0">Real-life Analogy</h3>
-                <p className="whitespace-pre-wrap">{result.analogySuggestion}</p>
-            </div>
-        </div>
-         <Separator className="my-4"/>
-        <div className="flex items-start gap-3">
-            <Presentation className="h-5 w-5 mt-1 text-primary" />
-             <div>
-                <h3 className="font-headline mt-0">Chalkboard Suggestion</h3>
-                <p className="whitespace-pre-wrap">{result.chalkboardDrawingSuggestion}</p>
-            </div>
-        </div>
-      </div>
-    </div>
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
   ) : null;
 
   return (
     <ToolView
-      title="Simple Explainer"
-      description="Explain complex topics with simple, real-life analogies."
+      title="Lesson Planner"
+      description="Generate 5-day lesson plans for any topic."
       onBack={onBack}
       form={formComponent}
       result={resultComponent}
