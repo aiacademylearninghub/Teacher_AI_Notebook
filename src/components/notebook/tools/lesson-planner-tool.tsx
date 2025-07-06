@@ -43,12 +43,11 @@ export function LessonPlannerTool({ onBack }: { onBack: () => void }) {
     setResult(null);
     try {
       const response = await runGenerateLessonPlan(data);
-      const parsedPlan = JSON.parse(response.lessonPlan);
-      setResult({ lessonPlan: parsedPlan.lesson_plan });
+      setResult({ lessonPlan: response.lesson_plan });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to generate lesson plan. Please check the format and try again.",
+        description: "Failed to generate lesson plan. Please try again.",
         variant: "destructive",
       });
       console.error(error);
