@@ -9,6 +9,8 @@ import { chatWithSources, ChatWithSourcesInput } from "@/ai/flows/chat-with-sour
 import { generateImage, GenerateImageInput } from "@/ai/flows/generate-image";
 import { generateAudio, GenerateAudioInput } from "@/ai/flows/generate-audio";
 import { extractTextFromImage, ExtractTextFromImageInput } from "@/ai/flows/extract-text-from-image";
+import { extractTextFromPdf, ExtractTextFromPdfInput } from "@/ai/flows/extract-text-from-pdf";
+
 
 export async function runGenerateStory(input: GenerateLocalStoryInput) {
     return await generateLocalStory(input);
@@ -44,4 +46,8 @@ export async function runGenerateAudio(input: GenerateAudioInput) {
 
 export async function runExtractTextFromImage(input: ExtractTextFromImageInput) {
     return await extractTextFromImage(input);
+}
+
+export async function runExtractTextFromPdf(input: ExtractTextFromPdfInput) {
+    return await extractTextFromPdf(input);
 }

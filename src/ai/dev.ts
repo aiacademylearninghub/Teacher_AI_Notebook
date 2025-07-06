@@ -10,3 +10,4 @@ import '@/ai/flows/chat-with-sources.ts';
 import '@/ai/flows/generate-image.ts';
 import '@/ai/flows/generate-audio.ts';
 import '@/ai/flows/extract-text-from-image.ts';
+import '@/ai/flows/extract-text-from-pdf.ts';

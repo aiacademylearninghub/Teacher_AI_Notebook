@@ -5,7 +5,7 @@ import { Upload, FileText, Globe, Image as ImageIcon, Video, Mic, ArrowLeft, Loa
 import { TextSourceForm } from './text-source-form';
 import type { Source } from './source-panel';
 import { useToast } from '@/hooks/use-toast';
-import { runExtractTextFromImage } from '@/lib/actions';
+import { runExtractTextFromImage, runExtractTextFromPdf } from '@/lib/actions';
 
 interface UploadSourceDialogProps {
   setSources: React.Dispatch<React.SetStateAction<Source[]>>;
@@ -57,6 +57,35 @@ export function UploadSourceDialog({ setSources, closeDialog }: UploadSourceDial
           setIsUploading(false);
         };
         reader.readAsDataURL(file);
+      } else if (file.type === 'application/pdf') {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          try {
+            const pdfDataUri = e.target?.result as string;
+            toast({ title: "Analyzing PDF...", description: "Please wait while we extract the text." });
+            const { text } = await runExtractTextFromPdf({ pdfDataUri });
+
+            if (!text.trim()) {
+                toast({ title: "No text found", description: "The PDF appears to be empty or could not be read.", variant: "destructive" });
+                setIsUploading(false);
+                return;
+            }
+
+            setSources(prev => [...prev, { name: file.name, content: text, icon: FileText, type: 'pdf' }]);
+            toast({ title: "Success!", description: `Source "${file.name}" has been added.` });
+            closeDialog();
+          } catch (err) {
+            console.error(err);
+            toast({ title: 'PDF Parse Failed', description: 'Could not extract text from the PDF.', variant: 'destructive' });
+          } finally {
+            setIsUploading(false);
+          }
+        };
+        reader.onerror = () => {
+          toast({ title: 'File Read Error', description: 'Could not read the selected PDF file.', variant: 'destructive' });
+          setIsUploading(false);
+        };
+        reader.readAsDataURL(file);
       } else if (file.type === 'text/plain' || file.name.endsWith('.md')) {
         const text = await file.text();
         setSources(prev => [...prev, { name: file.name, content: text, icon: FileText, type: 'text' }]);
@@ -64,7 +93,7 @@ export function UploadSourceDialog({ setSources, closeDialog }: UploadSourceDial
         closeDialog();
         setIsUploading(false);
       } else {
-        toast({ title: 'Unsupported File Type', description: 'Please upload a text (.txt, .md) or image (.png, .jpg) file.', variant: 'destructive' });
+        toast({ title: 'Unsupported File Type', description: 'Please upload a text (.txt, .md), image (.png, .jpg), or PDF (.pdf) file.', variant: 'destructive' });
         setIsUploading(false);
       }
     } catch (error) {
@@ -96,7 +125,7 @@ export function UploadSourceDialog({ setSources, closeDialog }: UploadSourceDial
         ref={fileInputRef} 
         onChange={handleFileChange} 
         className="hidden" 
-        accept="image/png,image/jpeg,image/webp,.txt,.md"
+        accept="image/png,image/jpeg,image/webp,.txt,.md,application/pdf"
         disabled={isUploading}
       />
       <div className="grid gap-4 py-4">
