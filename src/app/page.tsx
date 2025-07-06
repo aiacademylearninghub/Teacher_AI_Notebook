@@ -1,15 +1,36 @@
+"use client"
+
+import { useState } from 'react';
 import { ChatPanel } from '@/components/chat/chat-panel';
-import { SourcePanel } from '@/components/sources/source-panel';
+import { SourcePanel, type Source } from '@/components/sources/source-panel';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { UploadSourceDialog } from '@/components/sources/upload-source-dialog';
 
 export default function Home() {
+  const [sources, setSources] = useState<Source[]>([]);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+
   return (
-    <div className="flex h-full">
-      <aside className="hidden md:flex flex-col w-[320px] lg:w-[360px] border-r border-border">
-        <SourcePanel />
-      </aside>
-      <main className="flex-1 flex flex-col">
-        <ChatPanel />
-      </main>
-    </div>
+    <>
+      <div className="flex h-full">
+        <aside className="hidden md:flex flex-col w-[320px] lg:w-[360px] border-r border-border">
+          <SourcePanel sources={sources} onAddSource={() => setIsUploadDialogOpen(true)} />
+        </aside>
+        <main className="flex-1 flex flex-col">
+          <ChatPanel sources={sources} onAddSource={() => setIsUploadDialogOpen(true)} />
+        </main>
+      </div>
+      <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+          <DialogContent>
+              <DialogHeader>
+                  <DialogTitle>Add a source</DialogTitle>
+              </DialogHeader>
+              <UploadSourceDialog 
+                setSources={setSources} 
+                closeDialog={() => setIsUploadDialogOpen(false)} 
+              />
+          </DialogContent>
+      </Dialog>
+    </>
   );
 }
