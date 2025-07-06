@@ -21,14 +21,14 @@ export type GenerateStudyMaterialsInput = z.infer<typeof GenerateStudyMaterialsI
 
 // Schemas for structured output
 const DifferentiatedWorksheetSchema = z.object({
-  type: z.literal('worksheet'),
+  type: z.string().describe("The type of the generated content, e.g., 'worksheet'"),
   comprehensionQuestions: z.array(z.string()).describe("A list of reading comprehension questions."),
   vocabularyTasks: z.array(z.string()).describe("A list of tasks focused on vocabulary from the text."),
   creativeTasks: z.array(z.string()).describe("A list of creative tasks or writing prompts related to the text."),
 });
 
 const MockQuestionPaperSchema = z.object({
-    type: z.literal('mock-paper'),
+    type: z.string().describe("The type of the generated content, e.g., 'mock-paper'"),
     title: z.string().describe("The title of the mock question paper."),
     totalMarks: z.number().describe("The total marks for the paper."),
     sections: z.array(z.object({
@@ -38,7 +38,7 @@ const MockQuestionPaperSchema = z.object({
 });
 
 const InterviewPrepSchema = z.object({
-    type: z.literal('interview-prep'),
+    type: z.string().describe("The type of the generated content, e.g., 'interview-prep'"),
     title: z.string().describe("The title for the interview preparation guide."),
     introduction: z.string().describe("A brief introduction to the interview prep guide."),
     sections: z.array(z.object({
@@ -51,7 +51,7 @@ const InterviewPrepSchema = z.object({
 });
 
 const KeyConceptsSummarySchema = z.object({
-    type: z.literal('summary'),
+    type: z.string().describe("The type of the generated content, e.g., 'summary'"),
     title: z.string().describe("The title of the summary."),
     concepts: z.array(z.object({
         concept: z.string().describe("The key concept or term."),
@@ -94,10 +94,10 @@ Source Text:
 ---
 
 Instructions for JSON output based on Task Type:
-- If the task is 'Differentiated Worksheet', populate the 'DifferentiatedWorksheet' schema. Create three sections: Comprehension Questions, Vocabulary Tasks, and Creative Tasks.
-- If the task is 'Mock Question Paper', populate the 'MockQuestionPaper' schema. Create a question paper with a mix of multiple-choice, short-answer, and long-answer questions. Include a title and suggest total marks.
-- If the task is 'Interview Preparation', populate the 'InterviewPrep' schema. Generate a list of potential interview questions based on the text, along with key talking points or sample answers for each.
-- If the task is 'Key Concepts Summary', populate the 'KeyConceptsSummary' schema. Extract and summarize the most important concepts, definitions, and key takeaways from the text. Use bullet points and bold text for clarity.
+- If the task is 'Differentiated Worksheet', populate the 'DifferentiatedWorksheet' schema. Create three sections: Comprehension Questions, Vocabulary Tasks, and Creative Tasks. The 'type' field must be 'worksheet'.
+- If the task is 'Mock Question Paper', populate the 'MockQuestionPaper' schema. Create a question paper with a mix of multiple-choice, short-answer, and long-answer questions. Include a title and suggest total marks. The 'type' field must be 'mock-paper'.
+- If the task is 'Interview Preparation', populate the 'InterviewPrep' schema. Generate a list of potential interview questions based on the text, along with key talking points or sample answers for each. The 'type' field must be 'interview-prep'.
+- If the task is 'Key Concepts Summary', populate the 'KeyConceptsSummary' schema. Extract and summarize the most important concepts, definitions, and key takeaways from the text. Use bullet points and bold text for clarity. The 'type' field must be 'summary'.
 
 Adhere strictly to the output schema.`,
 });
