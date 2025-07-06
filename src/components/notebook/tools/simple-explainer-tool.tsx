@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ToolView } from '../tool-view';
 import { useToast } from '@/hooks/use-toast';
 import type { GenerateSimpleExplanationOutput } from '@/ai/flows/generate-simple-explanations';
-import { Lightbulb, Soup, Wheat, Blackboard } from 'lucide-react';
+import { Lightbulb, Wheat, Presentation } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 type FormData = z.infer<typeof simpleExplainerSchema>;
@@ -124,7 +124,7 @@ export function SimpleExplainerTool({ onBack }: { onBack: () => void }) {
         </div>
          <Separator className="my-4"/>
         <div className="flex items-start gap-3">
-            <Blackboard className="h-5 w-5 mt-1 text-primary" />
+            <Presentation className="h-5 w-5 mt-1 text-primary" />
              <div>
                 <h3 className="font-headline mt-0">Chalkboard Suggestion</h3>
                 <p className="whitespace-pre-wrap">{result.chalkboardDrawingSuggestion}</p>
