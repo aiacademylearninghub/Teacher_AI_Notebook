@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { BookText, ClipboardEdit, Lightbulb, GraduationCap, Puzzle, Gamepad2 } from "lucide-react";
+import { BookText, ClipboardEdit, Lightbulb, GraduationCap, Gamepad2 } from "lucide-react";
 
 interface StudioDashboardProps {
   onSelectTool: (toolId: string) => void;
@@ -12,8 +12,7 @@ const tools = [
   { id: "worksheet", title: "Worksheet Wizard", description: "Create worksheets from lesson text.", icon: ClipboardEdit },
   { id: "explainer", title: "Simple Explainer", description: "Explain topics with simple analogies.", icon: Lightbulb },
   { id: "planner", title: "Lesson Planner", description: "Generate 5-day lesson plans.", icon: GraduationCap },
-  { id: "game", title: "Game Time", description: "Play Tic-Tac-Toe against an AI.", icon: Puzzle },
-  { id: "interactive-games", title: "Interactive Games", description: "Play simple, fun games.", icon: Gamepad2 },
+  { id: "game", title: "Game Time", description: "Play simple, interactive games.", icon: Gamepad2 },
 ];
 
 const ToolButton = ({ tool, onSelect }: { tool: typeof tools[0], onSelect: (id: string) => void }) => {
