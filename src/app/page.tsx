@@ -14,8 +14,9 @@ import { WorksheetWizardTool } from '@/components/studio/tools/worksheet-wizard-
 import { SimpleExplainerTool } from '@/components/studio/tools/simple-explainer-tool';
 import { LessonPlannerTool } from '@/components/studio/tools/lesson-planner-tool';
 import { GameTimeTool } from '@/components/studio/tools/game-time-tool';
+import { InteractiveGamesTool } from '@/components/studio/tools/interactive-games-tool';
 
-type ToolId = 'story' | 'worksheet' | 'explainer' | 'planner' | 'game';
+type ToolId = 'story' | 'worksheet' | 'explainer' | 'planner' | 'game' | 'interactive-games';
 type View = 'chat' | ToolId;
 
 interface ToolProps {
@@ -28,6 +29,7 @@ const toolComponents: Record<ToolId, ComponentType<ToolProps>> = {
   explainer: SimpleExplainerTool,
   planner: LessonPlannerTool,
   game: GameTimeTool,
+  'interactive-games': InteractiveGamesTool,
 };
 
 
