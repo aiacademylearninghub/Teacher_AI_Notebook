@@ -4,7 +4,7 @@ import { generateLocalStory, GenerateLocalStoryInput } from "@/ai/flows/generate
 import { generateDifferentiatedWorksheets, GenerateDifferentiatedWorksheetsInput } from "@/ai/flows/generate-differentiated-worksheets";
 import { generateSimpleExplanation, GenerateSimpleExplanationInput } from "@/ai/flows/generate-simple-explanations";
 import { generateLessonPlan, GenerateLessonPlanInput } from "@/ai/flows/generate-lesson-plan";
-import { generateGame, GenerateGameInput } from "@/ai/flows/generate-game";
+import { playTicTacToe, PlayTicTacToeInput } from "@/ai/flows/play-tic-tac-toe";
 import { chatWithSources, ChatWithSourcesInput } from "@/ai/flows/chat-with-sources";
 import { generateImage, GenerateImageInput } from "@/ai/flows/generate-image";
 import { generateAudio, GenerateAudioInput } from "@/ai/flows/generate-audio";
@@ -28,8 +28,8 @@ export async function runGenerateLessonPlan(input: GenerateLessonPlanInput) {
     return await generateLessonPlan(input);
 }
 
-export async function runGenerateGame(input: GenerateGameInput) {
-    return await generateGame(input);
+export async function runPlayTicTacToe(input: PlayTicTacToeInput) {
+    return await playTicTacToe(input);
 }
 
 export async function runChatWithSources(input: ChatWithSourcesInput) {

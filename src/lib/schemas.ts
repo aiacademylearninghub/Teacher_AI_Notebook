@@ -23,9 +23,3 @@ export const lessonPlannerSchema = z.object({
   gradeLevel: z.string(),
   language: z.string().min(2),
 });
-
-export const gameTimeSchema = z.object({
-  topic: z.string().min(3, { message: 'Topic must be at least 3 characters long.' }),
-  gradeLevel: z.string(),
-  language: z.string().min(2),
-});

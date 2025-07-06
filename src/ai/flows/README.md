@@ -1,6 +1,6 @@
 # AI Flows Directory (`/ai/flows`)
 
-This directory contains individual Genkit "flows". A flow is a server-side function that orchestrates one or more calls to an AI model to perform a specific, reusable task.
+This directory contains individual Genkit "flows". A flow is a server-side function that orchestrates one or more calls to an AI model to perform a specific, reusable task. This can range from content generation (like stories or lesson plans) to interactive tasks (like playing a game).
 
 ## Flow Structure:
 
