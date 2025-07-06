@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { PanelLeftOpen, PanelRightOpen, Menu } from "lucide-react";
 import { useMediaQuery } from '@/hooks/use-media-query';
 
@@ -98,6 +98,7 @@ export function AppLayout({ leftPanel, mainPanel, rightPanel }: AppLayoutProps) 
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="left" className="p-0 w-[300px] sm:w-[360px]">
+                            <SheetTitle className="sr-only">Tools Menu</SheetTitle>
                             {leftPanelWithClose}
                         </SheetContent>
                     </Sheet>
@@ -115,6 +116,7 @@ export function AppLayout({ leftPanel, mainPanel, rightPanel }: AppLayoutProps) 
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="right" className="p-0 w-[300px] sm:w-[320px]">
+                             <SheetTitle className="sr-only">Sources Panel</SheetTitle>
                              {rightPanelWithClose}
                         </SheetContent>
                     </Sheet>
