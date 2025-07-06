@@ -1,13 +1,22 @@
 import type {Metadata} from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Playfair_Display, PT_Sans } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
+import { ThemeProvider } from '@/components/theme-provider';
 
-const inter = Inter({ subsets: ['latin'] })
+const pt_sans = PT_Sans({ 
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-pt-sans',
+});
+const playfair = Playfair_Display({ 
+  subsets: ['latin'],
+  variable: '--font-playfair',
+});
 
 export const metadata: Metadata = {
-  title: 'AI Notebook',
-  description: 'Explore our integrated AI platforms designed to accelerate your learning and development.',
+  title: 'AI Notebook for Bharat',
+  description: 'An AI-powered teaching assistant for Indian educators.',
 };
 
 export default function RootLayout({
@@ -16,11 +25,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head />
-      <body className={inter.className}>
-        {children}
-        <Toaster />
+      <body className={`${pt_sans.variable} ${playfair.variable} font-sans`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

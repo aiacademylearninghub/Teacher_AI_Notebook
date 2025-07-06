@@ -2,9 +2,32 @@
 
 import React from 'react';
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-import { BrainCircuit, PanelLeftClose, MessageSquare } from "lucide-react";
+import { 
+    BrainCircuit, 
+    PanelLeftClose, 
+    MessageSquare, 
+    User, 
+    LifeBuoy, 
+    LogOut, 
+    Sun, 
+    Moon 
+} from "lucide-react";
 import { StudioDashboard } from './studio-dashboard';
+import { 
+    DropdownMenu, 
+    DropdownMenuContent, 
+    DropdownMenuItem, 
+    DropdownMenuLabel, 
+    DropdownMenuSeparator, 
+    DropdownMenuTrigger,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuPortal
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface StudioNavProps {
     onSelectTool: (tool: string) => void;
@@ -13,6 +36,8 @@ interface StudioNavProps {
 }
 
 export function StudioNav({ onSelectTool, onToggle, isExpanded }: StudioNavProps) {
+    const { setTheme } = useTheme();
+
     if (!isExpanded) {
         return null;
     }
@@ -25,7 +50,7 @@ export function StudioNav({ onSelectTool, onToggle, isExpanded }: StudioNavProps
                         <div className="p-1.5 bg-primary rounded-full">
                             <BrainCircuit className="w-5 h-5 text-primary-foreground" />
                         </div>
-                        <h1 className="text-lg font-semibold text-foreground/90">AI Notebook</h1>
+                        <h1 className="font-headline text-xl font-semibold text-foreground/90">AI Notebook</h1>
                     </Link>
                 </Button>
                 {onToggle && (
@@ -49,6 +74,52 @@ export function StudioNav({ onSelectTool, onToggle, isExpanded }: StudioNavProps
                     </div>
                 </Button>
                 <StudioDashboard onSelectTool={onSelectTool} />
+            </div>
+
+            <div className="mt-auto p-4 border-t border-border">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="w-full justify-start text-left h-auto p-2">
+                            <Avatar className="h-9 w-9 mr-3">
+                                <AvatarImage src="https://placehold.co/40x40.png" alt="User profile" data-ai-hint="person user" />
+                                <AvatarFallback>U</AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col">
+                                <span className="font-semibold text-sm">Guest User</span>
+                                <span className="text-xs text-muted-foreground">teacher@example.com</span>
+                            </div>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56 mb-2 ml-2" side="top" align="start">
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>
+                                <Sun className="h-4 w-4 mr-2 dark:hidden" />
+                                <Moon className="h-4 w-4 mr-2 hidden dark:inline-block" />
+                                <span>Theme</span>
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuPortal>
+                                <DropdownMenuSubContent>
+                                    <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
+                                </DropdownMenuSubContent>
+                            </DropdownMenuPortal>
+                        </DropdownMenuSub>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                            <a href="https://firebase.google.com/docs/genai" target="_blank" rel="noopener noreferrer">
+                                <LifeBuoy className="mr-2 h-4 w-4" />
+                                <span>AI Academy</span>
+                            </a>
+                        </DropdownMenuItem>
+                         <DropdownMenuItem disabled>
+                            <LogOut className="mr-2 h-4 w-4" />
+                            <span>Log out</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </aside>
     );

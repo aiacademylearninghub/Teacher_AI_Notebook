@@ -9,6 +9,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-pt-sans)'],
+        headline: ['var(--font-playfair)'],
+      },
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
@@ -107,6 +111,15 @@ export default {
             '--tw-prose-pre-bg': theme('colors.muted'),
             '--tw-prose-th-borders': theme('colors.border'),
             '--tw-prose-td-borders': theme('colors.border'),
+            h1: {
+              fontFamily: theme('fontFamily.headline'),
+            },
+            h2: {
+              fontFamily: theme('fontFamily.headline'),
+            },
+            h3: {
+              fontFamily: theme('fontFamily.headline'),
+            },
           }
         }
       })
