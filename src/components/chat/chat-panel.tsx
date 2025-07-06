@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { UploadCloud, Send, User, BrainCircuit, ImageIcon, Mic, Loader2 } from 'lucide-react';
+import { UploadCloud, Send, User, BrainCircuit, ImageIcon, Mic, Loader2, Eraser, Trash2 } from 'lucide-react';
 import type { Source } from '@/components/sources/source-panel';
 import { runChatWithSources, runGenerateImage, runGenerateAudio } from '@/lib/actions';
 import { nanoid } from 'nanoid';
@@ -37,7 +37,19 @@ const sampleQuestions = [
 ];
 
 export function ChatPanel({ sources, onAddSource }: ChatPanelProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    if (typeof window === 'undefined') {
+        return [];
+    }
+    try {
+        const item = window.localStorage.getItem('chatHistory');
+        return item ? JSON.parse(item) : [];
+    } catch (error) {
+        console.error("Failed to load chat history from localStorage", error);
+        return [];
+    }
+  });
+
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -46,6 +58,17 @@ export function ChatPanel({ sources, onAddSource }: ChatPanelProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const hasSources = sources.length > 0;
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+        try {
+            window.localStorage.setItem('chatHistory', JSON.stringify(messages));
+        } catch (error) {
+            console.error("Failed to save chat history to localStorage", error);
+        }
+    }
+  }, [messages]);
+
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -64,6 +87,14 @@ export function ChatPanel({ sources, onAddSource }: ChatPanelProps) {
 
   const updateMessage = (id: string, updates: Partial<ChatMessage>) => {
     setMessages(prev => prev.map(msg => msg.id === id ? { ...msg, ...updates } : msg));
+  };
+  
+  const handleClearChat = () => {
+    setMessages([]);
+  };
+
+  const handleDeleteMessage = (id: string) => {
+    setMessages(prev => prev.filter(msg => msg.id !== id));
   };
 
   const handleSampleQuestionClick = (question: string) => {
@@ -184,14 +215,24 @@ export function ChatPanel({ sources, onAddSource }: ChatPanelProps) {
     return (
         <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-6">
             {messages.map((message) => (
-                <div key={message.id} className={`flex items-start gap-4 ${message.role === 'user' ? 'justify-end' : ''}`}>
+                <div key={message.id} className={`group flex items-start gap-4 ${message.role === 'user' ? 'justify-end' : ''}`}>
                    {message.role === 'assistant' && (
                        <Avatar className="h-8 w-8 shrink-0">
                          <AvatarFallback className="bg-primary text-primary-foreground"><BrainCircuit className="w-4 h-4" /></AvatarFallback>
                        </Avatar>
                    )}
-                   <div className={`rounded-lg p-3 max-w-[85%] ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                        <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
+                   <div className={`relative rounded-lg p-3 max-w-[85%] ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="absolute top-1 right-1 h-6 w-6 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleDeleteMessage(message.id)}
+                            title="Delete message"
+                        >
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+
+                        <p className="text-sm whitespace-pre-wrap break-words pr-6">{message.content}</p>
                         
                         <div className="mt-4 space-y-4">
                           {message.imageUrl && (
@@ -255,6 +296,15 @@ export function ChatPanel({ sources, onAddSource }: ChatPanelProps) {
 
   return (
     <div className="flex flex-col h-full bg-background">
+      {hasSources && messages.length > 0 && (
+          <div className="p-4 border-b border-border flex items-center justify-between shrink-0">
+              <h3 className="text-lg font-semibold">Conversation</h3>
+              <Button variant="ghost" size="sm" onClick={handleClearChat}>
+                  <Eraser className="mr-2 h-4 w-4" />
+                  Clear Chat
+              </Button>
+          </div>
+      )}
       <div className="flex-1 flex flex-col min-h-0">
         {renderChatContent()}
       </div>
